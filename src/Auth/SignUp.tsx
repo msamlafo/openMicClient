@@ -1,112 +1,136 @@
 import React, { Component } from 'react';
-import {Form, FormGroup, Label, Input, Button} from 'reactstrap';
+import {Alert, Form, FormGroup, Label, Input, Button} from 'reactstrap';
 
-export interface SignUpProps {
-    
+type SignUpProps = {
+    history: {
+        push: Function,
+    },
 }
- 
-export interface SignUpState {
-    
-}
- 
-class SignUp extends 
-Component<SignUpProps, SignUpState> {
-    constructor(props: SignUpProps) {
-        super(props);
 
+type SignUpState = {
+    signUpData: {
+        firstName: string,
+        lastName: string
+        email: string,
+        password: string
+        
+    },
+    createProfileData: {},
+}
+
+class SignUp extends Component <SignUpProps, SignUpState> {
+    constructor(props: SignUpProps){
+        super(props)
+        this.state = { 
+            signUpData: {
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: ""
+                
+            },
+            createProfileData: {},
+         }
     }
-    API_URL = `http://localhost:4000/user/signup`;
 
-    state = {
-        password : "",
-        email: "",
-        firstName: "",
-        lastName: ""
-    };
-
-    handleSubmit=(event:any)=>{
+    handleSubmit =(event: React.SyntheticEvent) =>{
         event.preventDefault();
-        console.log('submit signup Info');
-            fetch(`${this.API_URL}`,{
-                method: 'POST', 
-                body: JSON.stringify( {firstName: this.state.firstName, lastName: this.state.lastName, email: this.state.email, password: this.state.password}),
-                headers: new Headers({
-                    'Content-Type': 'application/json'
-                })
+        const API_URL = "http://localhost:4000/user/signup";
+        console.log("submit sign up info", this.state.signUpData);
+        
+        fetch(`${API_URL}`, {
+            method: "POST",
+            body: JSON.stringify({
+                firstName: this.state.signUpData.firstName,
+                lastName: this.state.signUpData.lastName,
+                email: this.state.signUpData.email,
+                password: this.state.signUpData.password
+            }),
+            headers: new Headers({
+                'Content-Type': 'application/json'
             })
-            .then(result => result.json())
-            .then(response => {
-                console.log(response);
-            })
-            .catch(error => console.log(error));
+        })
+        .then(result => result.json())
+        .then(response => {
+            if(response.status === 200){
+                // set / update the token in localstorage
+                localStorage.setItem("token", response.data.sessionToken);
+                // go to My Profile page
+                this.props.history.push('/profile/mine/new')
+            }
+            // send to Profile Update Page
+            console.log(response);
+        })
+        .catch(error => console.log(error));
     }
 
-    handleFirstNameChange=(event:any)=>{
-        const currentState = this.state;
-        currentState.firstName = event.target.value;
-        this.setState(currentState);
-    };
-
-    handlelastNameChange=(event:any)=>{
-        const currentState = this.state;
-        currentState.lastName = event.target.value;
-        this.setState(currentState);
-    }
-    handleEmailChange=(event:any)=>{
-        const currentState = this.state;
-        currentState.email = event.target.value;
-        this.setState(currentState);
-    };
-
-    handlePasswordChange=(event:any)=>{
-        const currentState = this.state;
-        currentState.password = event.target.value;
-        this.setState(currentState);
+    handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) =>{
+        const value = event.currentTarget.value;
+        const signUpData:any = { ...this.state.signUpData };
+        signUpData[event.currentTarget.name] = value;
+        this.setState({signUpData});
     }
 
     render() { 
+        
         return ( 
             <React.Fragment>
-            <h2>SignUp</h2>
-            <div>
-                Hello Poem lovers. This is the SignUp Page
-            </div>
-            <Form onSubmit={this.handleSubmit}>
-            <FormGroup>
-                    <Label htmlFor='firstName'>First Name</Label>
-                    <Input 
-                        type='text' 
-                        value={this.state.firstName}
-                        onChange={this.handleFirstNameChange}
-                    />
-                </FormGroup>
+                <Alert color="warning">
+                    <h4 className="alert-heading">Sign Up</h4>
+                    <p>
+                    Hello Poem lovers, welcome to openMic Poem! Please create an account to get Started.
+                    </p>
+                </Alert>
+                <Form 
+                onSubmit={(event) =>this.handleSubmit(event)} 
+                inline>
+                <Alert color="warning">
                 <FormGroup>
-                    <Label htmlFor='lastName'>Last Name</Label>
-                    <Input 
-                        type='text' 
-                        value={this.state.lastName}
-                        onChange={this.handlelastNameChange}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor='email'>Email</Label>
-                    <Input 
-                        type='email' 
-                        value={this.state.email}
-                        onChange={this.handleEmailChange}
-                    />
-                </FormGroup>
-                <FormGroup>
-                    <Label htmlFor='password'>Create Password</Label>
-                    <Input 
-                    type='password' 
-                    value={this.state.password}
-                    onChange={this.handlePasswordChange}/>
-                </FormGroup>
-                <Button type="submit">SignUp </Button>
-            </Form>
-        </React.Fragment>  
-         );
+                        <Label for="exampleEmail" hidden>First Name</Label>
+                        <Input 
+                            id="exampleEmail"   placeholder="First Name" 
+                            name="firstName"
+                            type='text' 
+                            value={this.state.signUpData.firstName}
+                            onChange={(event) =>this.handleChange(event)}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="exampleEmail" hidden>Last Name</Label>
+                        <Input 
+                            id="exampleEmail"   placeholder="Last Name" 
+                            name="lastName"
+                            type='text' 
+                            value={this.state.signUpData.lastName}
+                            onChange={(event) =>this.handleChange(event)}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="exampleEmail" hidden>Email</Label>
+                        <Input 
+                            id="exampleEmail"   placeholder="Email" 
+                            name="email"
+                            type='email' 
+                            value={this.state.signUpData.email}
+                            onChange={(event) =>this.handleChange(event)}
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="examplePassword" hidden>Password</Label>
+                            <Input 
+                            id="examplePassword" placeholder="Password"
+                            name="password"
+                            type='password' 
+                            value={this.state.signUpData.password}
+                            onChange={(event) =>this.handleChange(event)}/>
+                    </FormGroup>{''}
+                    <Button type="submit" color="primary">Sign Up</Button>
+                </Alert>
+                </Form>
+                <div>
+                </div>
+            </React.Fragment>
+        );
     }
 }
  
