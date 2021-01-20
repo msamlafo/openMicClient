@@ -1,68 +1,62 @@
 import React, { Component } from 'react';
-import { Alert, Form, Button } from 'reactstrap';
+import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
+import { BASE_API_URL, hasLoginToken } from '../Common/Environment';
 import FormInput from '../Common/FormInput';
+import { BrowserRouterPropsType } from '../Common/TypeConfig';
+type LoginProps = BrowserRouterPropsType & {};
 
-type LoginProps ={
-
-}
-
-type loginField =
-    "email" | "password"
-
+type loginField = 'email' | 'password';
 
 type LoginState = {
-    loginData: {
-        email: string,
-        password: string
-    },
-        //   errors is supposed to be an empty object
-      errors: {
-        email: string,
-        password: string
-    } ,
-    // errors: {}
-}
+  loginData: {
+    email: string;
+    password: string;
+  };
+  //   errors is supposed to be an empty object
+  errors: any;
+  // errors: {}
+};
 
-class Login extends Component <LoginProps, LoginState>{
+class Login extends Component<LoginProps, LoginState> {
   constructor(props: LoginProps) {
     super(props);
     this.state = {
       loginData: {
-          email: "",
-          password: "",
+        email: '',
+        password: '',
       },
       //errors is supposed to be an empty object
-      errors: {
-            email: "",
-            password: ""
-      },
-    //   errors: {}
+      errors: {},
     };
   }
 
-  validate = () => {
-      let errors = {...this.state.errors}
-    if (this.state.loginData.email === '')
-    errors.email = "Username is required"
-    this.setState({errors});
-    
-    if (this.state.loginData.password === '')
-      errors.password = 'Password is required';
-      this.setState({errors});
-
-    return Object.keys(errors).length === 0 ? null : errors ;
+  componentDidMount = () => {
+    if (hasLoginToken()) {
+      this.props.history.go(-1);
+    }
   };
 
-  handleSubmit = (event:React.SyntheticEvent) => {
+  validate = () => {
+    let errors = { ...this.state.errors };
+    if (this.state.loginData.email === '')
+      errors.email = 'Username is required';
+    this.setState({ errors });
+
+    if (this.state.loginData.password === '')
+      errors.password = 'Password is required';
+    this.setState({ errors });
+
+    return Object.keys(errors).length === 0 ? null : errors;
+  };
+
+  handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     const errors = this.validate();
-    console.log(errors);
-    this.setState({ errors : this.state.errors || {} });
+    this.setState({ errors: this.state.errors || {} });
     if (errors) return;
 
-    const API_URL = 'http://localhost:4000/user/login';
-    console.log('submit login info');
+    const API_URL = `${BASE_API_URL}/user/login`;
 
     fetch(`${API_URL}`, {
       method: 'POST',
@@ -76,15 +70,20 @@ class Login extends Component <LoginProps, LoginState>{
     })
       .then((result) => result.json())
       .then((response) => {
-        if (response.status === 200) console.log(response);
+        if (response.status === 200) {
+          console.log(response);
+          localStorage.setItem('token', response.data.sessionToken);
+          this.props.history.replace('/poetry');
+        }
       })
       .catch((error) => console.log(error));
   };
 
   handleChange = (event: React.FormEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
+    const { currentTarget: targetElement } = event;
+    const value = targetElement.value;
     const loginData = { ...this.state.loginData };
-    loginData[event.currentTarget.name as loginField] = value;
+    loginData[targetElement.name as loginField] = value;
     this.setState({ loginData });
   };
 
@@ -92,12 +91,31 @@ class Login extends Component <LoginProps, LoginState>{
     const { errors, loginData } = this.state;
     return (
       <React.Fragment>
-        <Alert color="success">
-          <h4 className="alert-heading">Login</h4>
-          <p>Hello Poem lovers. This is the Login Page</p>
-        </Alert>
-        <Form onSubmit={(event) => this.handleSubmit(event)} inline>
-          <Alert color="secondary">
+        {/* <div className="form-floating mb-3">
+          <input
+            type="email"
+            className="form-control"
+            id="floatingInput"
+            placeholder="name@example.com"
+          />
+          <label htmlFor="floatingInput">Email address</label>
+        </div>
+        <div className="form-floating">
+          <input
+            type="password"
+            className="form-control"
+            id="floatingPassword"
+            placeholder="Password"
+          />
+          <label htmlFor="floatingPassword">Password</label>
+        </div> */}
+
+        <Form onSubmit={(event) => this.handleSubmit(event)}>
+          <Card body className="auth-forms">
+            <CardTitle tag="h3">Login</CardTitle>
+            <CardText tag="h6" className="text-success mb-3">
+              Hello Poem lovers. This is the Login Page
+            </CardText>
             <FormInput
               label="Email"
               name="email"
@@ -109,17 +127,17 @@ class Login extends Component <LoginProps, LoginState>{
             <FormInput
               label="Password"
               name="password"
-              value={loginData.email}
+              value={loginData.password}
               onChange={this.handleChange}
               type="password"
               error={errors.password}
             />
-            
             <Button type="submit" color="primary">
               Login
             </Button>
-          </Alert>
+          </Card>
         </Form>
+        <div className="auth-forms"></div>
       </React.Fragment>
     );
   }

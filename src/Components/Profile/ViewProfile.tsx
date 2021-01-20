@@ -7,27 +7,14 @@ import {
   CardTitle,
   CardSubtitle,
   Button,
+  Row,
+  Col,
 } from 'reactstrap';
 import UpdateProfile from './UpdateProfile';
 import { ProfileProps, ProfilePropsDefault } from './ProfileForm';
+import { BrowserRouterPropsType, profileFormFieldName } from '../../Common/TypeConfig';
 
-type profileField =
-  | 'firstName'
-  | 'lastName'
-  | 'picUrl'
-  | 'email'
-  | 'about'
-  | 'hobbies'
-  | 'poemWriterSince'
-  | 'funFact'
-  | 'dreamJob'
-  | 'resumeUpload';
-
-export type ViewProfileProps = {
-  match: any;
-  location: any;
-  history: any;
-};
+export type ViewProfileProps = BrowserRouterPropsType & {};
 
 export type ViewProfileState = {
   profile: ProfileProps;
@@ -114,7 +101,7 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
   handleChange = (event: React.FormEvent<HTMLInputElement>): void => {
     const value = event.currentTarget.value;
     const profileInEdit: ProfileProps = { ...this.state.profileInEdit };
-    profileInEdit[event.currentTarget.name as profileField] = value;
+    profileInEdit[event.currentTarget.name as profileFormFieldName] = value;
     this.setState({ profileInEdit });
   };
 
@@ -125,16 +112,18 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
   render() {
     const { profile } = this.state;
     return (
-      <div className="container">
+      <div className="profileCard">
         <Card>
           <CardImg
+            className="imageTag"
             top
-            style={{ width: '30vw' }}
+            // style={{ borderRadius:'50%'}}
+            // width="30%"
             src={profile.picUrl}
             alt="Card image cap"
           />
           <CardBody>
-            <CardTitle tag="h5">
+            <CardTitle tag="h4">
               <strong>
                 {profile.firstName} {profile.lastName}
               </strong>
@@ -142,19 +131,65 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
             <CardSubtitle tag="h6" className="mb-2 text-muted">
               {profile.email}
             </CardSubtitle>
-            <CardText className="text-muted">About: {profile.about}</CardText>
-            <CardText className="text-muted">
-              Hobbies: {profile.hobbies}
-            </CardText>
-            <CardText>
-              <strong>Writer Since:</strong> {profile.poemWriterSince}
-            </CardText>
-            <CardText>Fun Fact: {profile.funFact}</CardText>
-            <CardText>Dream Job{profile.dreamJob}</CardText>
-            <CardText>Resume: {profile.resumeUpload}</CardText>
-            <Button color="primary" onClick={() => this.handleToggle()}>
-              Edit Profile
-            </Button>
+            <CardText>Writer Since: {profile.poemWriterSince}</CardText>
+            <Row className="mb-3">
+              <Col md={4}>
+                <CardText tag="h6" className="text-right lead">
+                  About:
+                </CardText>
+              </Col>
+              <Col>
+                <CardText className="text-left lead">{profile.about}</CardText>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={4}>
+                <CardText tag="h6" className="text-right lead">
+                  Hobbies:
+                </CardText>
+              </Col>
+              <Col>
+                <CardText className="text-left lead">
+                  {profile.hobbies}
+                </CardText>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={4}>
+                <CardText tag="h6" className="text-right lead">
+                  Fun facts:
+                </CardText>
+              </Col>
+              <Col>
+                <CardText className="text-left lead">
+                  {profile.funFact}
+                </CardText>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col md={4}>
+                <CardText tag="h6" className="text-right lead">
+                  Dream Job:
+                </CardText>
+              </Col>
+              <Col>
+                <CardText className="text-left lead">
+                  {profile.dreamJob}
+                </CardText>
+              </Col>
+            </Row>
+            <Row className="my-3">
+              <Col>
+                <Button color="secondary" className="mr-2">
+                  <i className="fas fa-file-download"></i>
+                  Download Resume
+                </Button>
+                <Button color="primary" onClick={() => this.handleToggle()}>
+                  <i className="fas fa-user-edit"></i>
+                  Edit Profile
+                </Button>
+              </Col>
+            </Row>
           </CardBody>
         </Card>
         <UpdateProfile

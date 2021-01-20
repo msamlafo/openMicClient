@@ -36,3 +36,41 @@
     transform: rotate(360deg);
   }
 }
+
+.auth-forms {
+  width: 500px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 40px;
+}
+
+.imageTag {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.profileCard {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.category-padding {
+  width: 200px;
+  flex-wrap: nowrap;
+  padding: 3px, 3px, 3px, 3px;
+  background: rgb(196, 195, 195);
+}
+
+.poemCard {
+  width: 100%;
+  margin-bottom:10px;
+}
+
+.comment-style {
+  font-family: 'Playfair Display', serif;
+}

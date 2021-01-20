@@ -11,22 +11,18 @@ import {
   ModalBody,
   ModalFooter,
 } from 'reactstrap';
-import { Poetry, poetryFormField } from '../../Common/TypeConfig';
+import { Poetry } from '../../Common/TypeConfig';
 
 type CreatePoemProps = {
-  history: {
-    push: Function;
-  };
   showModal: boolean;
-  isOpen: boolean;
+  poem: Poetry;
   onToggle: (event: React.SyntheticEvent) => void;
-  className: string;
+  onChange: (event:React.FormEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onSubmit: (event: React.SyntheticEvent) => void;
 };
 
 type CreatePoemState = {
   createPoem: Poetry;
-  handleChange: Function;
-  token: string;
 };
 
 const poetryTypesList = [
@@ -66,76 +62,18 @@ type poetryTypes =
   | 'Villanelle';
 
 class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
-  constructor(props: CreatePoemProps) {
-    super(props);
-    this.state = {
-      createPoem: {
-        title: '',
-        category: '',
-        writeUp: '',
-        poemWriterComment: '',
-      },
-      token: '',
-      handleChange: Function,
-    };
-  }
 
-  handleSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
-    const { createPoem: poemToCreate } = this.state;
-    const postData = {
-      title: poemToCreate.title,
-      category: poemToCreate.category,
-      writeUp: poemToCreate.writeUp,
-      poemWriterComment: poemToCreate.poemWriterComment,
-    };
-
-    const createPoem = () => {
-      const API_URL = `${process.env.REACT_APP_API_URL}/poetry`;
-      fetch(`${API_URL}`, {
-        method: 'POST',
-        body: JSON.stringify(postData),
-        headers: new Headers({
-          'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
-        }),
-      })
-        .then((result) => result.json())
-        .then((response) => {
-          if (response.status === 200) {
-            console.log(response);
-            // instead of setting the state, go to a new component that displays either the new record and/or a success message
-            const poetryId = response.data.id;
-            this.props.history.push(`/poetry/${poetryId}`);
-          } else {
-            // let the user know something bad happened
-            console.log('Poem was not created. Please try again later.');
-          }
-        });
-    };
-    createPoem();
-  }
-
-  handleChange = (
-    event: React.FormEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const value = event.currentTarget.value;
-    const createPoem = { ...this.state.createPoem };
-    createPoem[event.currentTarget.name as poetryFormField] = value;
-    this.setState({ createPoem });
-  };
 
   render() {
-    const { className } = this.props;
+    const {poem,showModal, onChange, onSubmit, onToggle,} = this.props;
     return (
-      <main className="container">
-        <Form onSubmit={(event) => this.handleSubmit(event)}>
+      <div className="container">
+        <Form>
           <Modal
-            isOpen={this.props.showModal}
-            toggle={this.props.onToggle}
-            className={className}
+            isOpen={showModal}
+            toggle={onToggle}
           >
-            <ModalHeader toggle={this.props.onToggle} charCode="X">
+            <ModalHeader toggle={onToggle} charCode="X">
               Create a poem
             </ModalHeader>
             <ModalBody>
@@ -145,8 +83,8 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                   type="text"
                   placeholder="Title"
                   name="title"
-                  value={this.state.createPoem.title}
-                  onChange={(event) => this.handleChange(event)}
+                  value={poem.title}
+                  onChange={(event) => onChange(event)}
                 ></Input>
               </FormGroup>
               <FormGroup>
@@ -157,34 +95,19 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                   type="select"
                   id="category"
                   name="category"
-                  onChange={(event) => this.handleChange(event)}
+                  onChange={(event) => onChange(event)}
                 >
+                  <option value={poem.category}>
+                    Select Category
+                  </option>
                   {poetryTypesList.map((type: string, index: number) => (
                     <option
                       key={index}
-                      selected={this.state.createPoem.category === type}
+                      selected={poem.category === type}
                     >
                       {type as poetryTypes}
                     </option>
                   ))}
-                  <option value={this.state.createPoem.category}>
-                    Select Category
-                  </option>
-                  <option>Blank verse</option>
-                  <option>Rhymed poetry</option>
-                  <option>Free verse</option>
-                  <option>Epics</option>
-                  <option>Narrative poetry</option>
-                  <option>Haiku</option>
-                  <option>Pastoral poetry</option>
-                  <option>Sonnet</option>
-                  <option>Elegies</option>
-                  <option>Ode</option>
-                  <option>Limerick</option>
-                  <option>Lyric poetry</option>
-                  <option>Ballad</option>
-                  <option>Soliloquy</option>
-                  <option>Villanelle</option>
                 </CustomInput>
               </FormGroup>
               <FormGroup>
@@ -194,9 +117,9 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                 <Input
                   type="textarea"
                   name="writeUp"
-                  value={this.state.createPoem.writeUp}
+                  value={poem.writeUp}
                   onChange={(event) => {
-                    this.handleChange(event);
+                    onChange(event);
                   }}
                   id="exampleText"
                   placeholder="Poem Write Up"
@@ -209,8 +132,8 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                 <Input
                   type="textarea"
                   name="poemWriterComment"
-                  value={this.state.createPoem.poemWriterComment}
-                  onChange={(event) => this.handleChange(event)}
+                  value={poem.poemWriterComment}
+                  onChange={(event) => onChange(event)}
                   id="exampleText"
                   placeholder="Comment"
                 />
@@ -221,14 +144,14 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                 type="submit"
                 color="primary"
                 size="lg"
-                onClick={this.props.onToggle}
+                onClick={onSubmit}
               >
                 Create Poem
               </Button>
             </ModalFooter>
           </Modal>
         </Form>
-      </main>
+      </div>
     );
   }
 }
