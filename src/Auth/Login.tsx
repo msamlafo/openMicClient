@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
-import { BASE_API_URL, hasLoginToken } from '../Common/Environment';
+import { BASE_API_URL } from '../Common/Environment';
 import FormInput from '../Common/FormInput';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
+import { hasLoginToken } from '../Common/Utility';
 type LoginProps = BrowserRouterPropsType & {};
 
 type loginField = 'email' | 'password';
@@ -37,14 +39,14 @@ class Login extends Component<LoginProps, LoginState> {
   };
 
   validate = () => {
-    let errors = { ...this.state.errors };
+    let errors: any = {};
     if (this.state.loginData.email === '')
       errors.email = 'Username is required';
-    this.setState({ errors });
 
     if (this.state.loginData.password === '')
       errors.password = 'Password is required';
-    this.setState({ errors });
+
+    this.setState({ errors: errors || {} });
 
     return Object.keys(errors).length === 0 ? null : errors;
   };
@@ -53,7 +55,6 @@ class Login extends Component<LoginProps, LoginState> {
     event.preventDefault();
 
     const errors = this.validate();
-    this.setState({ errors: this.state.errors || {} });
     if (errors) return;
 
     const API_URL = `${BASE_API_URL}/user/login`;
@@ -73,6 +74,9 @@ class Login extends Component<LoginProps, LoginState> {
         if (response.status === 200) {
           console.log(response);
           localStorage.setItem('token', response.data.sessionToken);
+          localStorage.setItem('email', response.data.user.email);
+          localStorage.setItem('isAdmin', response.data.isAdmin);
+          localStorage.setItem('userId', response.data.user.id);
           this.props.history.replace('/poetry');
         }
       })
@@ -91,25 +95,6 @@ class Login extends Component<LoginProps, LoginState> {
     const { errors, loginData } = this.state;
     return (
       <React.Fragment>
-        {/* <div className="form-floating mb-3">
-          <input
-            type="email"
-            className="form-control"
-            id="floatingInput"
-            placeholder="name@example.com"
-          />
-          <label htmlFor="floatingInput">Email address</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="password"
-            className="form-control"
-            id="floatingPassword"
-            placeholder="Password"
-          />
-          <label htmlFor="floatingPassword">Password</label>
-        </div> */}
-
         <Form onSubmit={(event) => this.handleSubmit(event)}>
           <Card body className="auth-forms">
             <CardTitle tag="h3">Login</CardTitle>
@@ -137,7 +122,11 @@ class Login extends Component<LoginProps, LoginState> {
             </Button>
           </Card>
         </Form>
-        <div className="auth-forms"></div>
+        <div className="m-2">
+          <p>
+            Don't have an account? <Link to="/signup">Sign up now</Link>.
+          </p>
+        </div>
       </React.Fragment>
     );
   }

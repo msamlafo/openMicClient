@@ -3,6 +3,7 @@ import { Button } from 'reactstrap';
 
 export type DeletePoemProps = {
   poetryId: number;
+  onReload: () => void;
 };
 
 export type DeletePoemState = {};
@@ -13,7 +14,8 @@ class DeletePoem extends React.Component<DeletePoemProps, {}> {
     this.state = {};
   }
 
-  deletePoem = () => {
+  handleDeletePoem = (event: React.SyntheticEvent) => {
+    event.preventDefault();
     const API_URL = `${process.env.REACT_APP_API_URL}/poetry/${this.props.poetryId}`;
 
     fetch(`${API_URL}`, {
@@ -27,21 +29,19 @@ class DeletePoem extends React.Component<DeletePoemProps, {}> {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-          return <h5>Poem successfully deleted</h5>;
+          this.props.onReload();
         }
       })
       .catch((err) => console.log(err));
   };
 
-  handleDelete = () => {
-    this.deletePoem();
-  };
-
   render() {
     return (
-      <Button color="danger" onClick={() => this.handleDelete()}>
-        Delete Poem
+      <div className="d-inline-block">
+        <Button color="danger" onClick={(event) => this.handleDeletePoem(event)}>
+        <i className="fa fa-trash" /> Delete Poem
       </Button>
+      </div>
     );
   }
 }

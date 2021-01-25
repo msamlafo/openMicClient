@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Card, Button, CardTitle, CardText, CardSubtitle } from 'reactstrap';
+import {
+  Card,
+  Badge,
+  Button,
+  CardTitle,
+  CardText,
+  CardSubtitle,
+} from 'reactstrap';
 import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import UpdatePoem from './UpdatePoem';
 import DeletePoem from './DeletePoem';
@@ -13,6 +20,7 @@ import {
 } from '../../Common/TypeConfig';
 import ViewAllComment from '../Comments/ViewAllComment';
 import { BASE_API_URL } from '../../Common/Environment';
+import { isOwner } from '../../Common/Utility';
 
 type ViewPoemProps = BrowserRouterPropsType & {};
 
@@ -24,7 +32,10 @@ type ViewPoemState = {
   showCreateModal: boolean;
   authorPic?: string;
   reload: boolean;
+  user: object;
 };
+
+ 
 
 class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   constructor(props: ViewPoemProps) {
@@ -36,6 +47,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       showCreateModal: false,
       showUpdateModal: false,
       reload: false,
+      user: {},
     };
   }
 
@@ -49,6 +61,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       writeUp: poetry.writeUp,
       poemWriterComment: poetry.poemWriterComment,
       authorPic: poetry.user.profile.picUrl || userAvatar,
+      authorId: poetry.user.id,
     };
   };
 
@@ -62,6 +75,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
         createdAt: c.createdAt,
         poetryId: c.poetryId,
         authorPic: c.user.profile.picUrl || userAvatar,
+        authorId: c.user.id,
       });
     });
     return comments;
@@ -83,12 +97,15 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       .then((result) => result.json())
       .then((response) => {
         console.log(response);
-        if (response.status === 200) {
-          const poetry = this.getPoetryStateObjectFromRawPoemData(
-            response.data
-          );
-          const comments = this.getCommentsObjectFromPoem(response.data);
-          console.log(poetry,comments);
+        const { data, status } = response;
+        if (status === 200) {
+          const poetry = data
+            ? this.getPoetryStateObjectFromRawPoemData(response.data)
+            : PoetryDefaultObject;
+          const comments = data?.comments
+            ? this.getCommentsObjectFromPoem(response.data)
+            : [];
+          console.log(poetry, comments);
           this.setState({
             poetry,
             poetryToEdit: poetry,
@@ -106,17 +123,17 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   componentDidUpdate = () => {
     if (this.state.reload) {
-      console.log('reloading poem')
+      console.log('reloading poem');
       this.getPoem();
     }
   };
-
-  handleUpdateToggle = () => {
-    this.setState({ showUpdateModal: !this.state.showUpdateModal });
-  };
-
+  
   handleCreateToggle = () => {
     this.setState({ showCreateModal: !this.state.showCreateModal });
+  };
+  
+  handleUpdateToggle = () => {
+    this.setState({ showUpdateModal: !this.state.showUpdateModal });
   };
 
   handleUpdate = (event: React.SyntheticEvent): void => {
@@ -154,11 +171,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   handleReload = () => {
     this.setState({ reload: true });
   };
-  //   handleDelete = (poem) => {
-  //     console.log(poem);
-  //     const poems = this.state.poems.filter((p) => p.id !== poem.id);
-  //     this.setState({ poems });
-  //   };
 
   handleChange = (
     event: React.FormEvent<HTMLSelectElement | HTMLInputElement>
@@ -171,7 +183,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   renderPoem() {
     const { poetry } = this.state;
-    // const count = poems.length;
     return poetry.id === 0 ? (
       <div className="p-3 bg-info my-2 rounded">
         <Toast>
@@ -185,23 +196,36 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       </div>
     ) : (
       <React.Fragment>
-        <Card body outline color="primary" className="m-2">
-          <CardTitle tag="h3"> {poetry.title} </CardTitle>
-          <CardSubtitle className="mb-2 text-muted">
-            Category: {poetry.category}
+        <Card body outline className="m-2">
+          <CardTitle tag="h3" className="text-capitalize">
+            {' '}
+            {poetry.title}{' '}
+          </CardTitle>
+          <CardSubtitle tag="h6" className="mb-2 text-muted text-capitalize">
+            <small>By</small> {poetry.author}
           </CardSubtitle>
-          <CardSubtitle className="mb-2 text-muted">
-            by {poetry.author}
-          </CardSubtitle>
-          <CardText> {poetry.writeUp} </CardText>
-          <Button
-            color="primary"
-            className="mb-2"
-            onClick={() => this.handleUpdateToggle()}
-          >
-            Edit Poem
-          </Button>
-          <DeletePoem poetryId={poetry.id || 0} />
+          <Badge color="info" pill className="mb-2 p-2 text-uppercase">
+            {poetry.category}
+          </Badge>
+          <CardText className="plain-text"> {poetry.writeUp} </CardText>
+          <div className="mb-2">
+            {isOwner(poetry) && (
+              <div className="d-inline-block m-2">
+                <Button
+                  color="primary"
+                  onClick={() => this.handleUpdateToggle()}
+                >
+                  <i className="fa fa-edit" /> Edit Poem
+                </Button>
+              </div>
+            )}
+            {isOwner(poetry) && (
+              <DeletePoem
+                poetryId={poetry.id || 0}
+                onReload={this.handleReload}
+              />
+            )}
+          </div>
           <ViewAllComment
             comments={this.state.comments}
             poetryId={poetry.id || 0}
@@ -223,10 +247,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
           onChange={this.handleChange}
           onSubmit={this.handleUpdate}
         />
-        {/* <CreatePoem 
-          showModal={this.state.showModal}
-          onToggle={this.handleToggle}
-        /> */}
       </main>
     );
   }

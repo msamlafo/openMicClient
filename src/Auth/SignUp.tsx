@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
+// import Joi from "joi-browser";
 import FormInput from '../Common/FormInput';
-import { hasLoginToken } from '../Common/Environment';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
+import { hasLoginToken } from '../Common/Utility';
 
 type SignUpProps = BrowserRouterPropsType & {
   errors: any;
@@ -16,6 +18,7 @@ type SignUpState = {
     password: string;
   };
   createProfileData: {};
+  errors: any;
 };
 
 class SignUp extends Component<SignUpProps, SignUpState> {
@@ -29,17 +32,41 @@ class SignUp extends Component<SignUpProps, SignUpState> {
         password: '',
       },
       createProfileData: {},
+      errors: {},
     };
   }
 
-  componentDidMount=()=>{
-    if(hasLoginToken()){
+  componentDidMount = () => {
+    if (hasLoginToken()) {
       this.props.history.go(-1);
     }
-  }
+  };
+
+  validate = () => {
+    let errors: any = {};
+    if (this.state.signUpData.firstName === '')
+      errors.firstName = 'First Name is required';
+
+    if (this.state.signUpData.lastName === '')
+      errors.lastName = 'Last Name is required';
+
+    if (this.state.signUpData.email === '') errors.email = 'Email is required';
+
+    if (this.state.signUpData.password === '')
+      errors.password = 'Password is required';
+
+    this.setState({ errors: errors || {} });
+
+    return Object.keys(errors).length === 0 ? null : errors;
+  };
 
   handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
+
+    const errors = this.validate();
+    console.log(errors);
+    if (errors) return;
+
     const API_URL = 'http://localhost:4000/user/signup';
     console.log('submit sign up info', this.state.signUpData);
 
@@ -60,6 +87,11 @@ class SignUp extends Component<SignUpProps, SignUpState> {
         if (response.status === 200) {
           // set / update the token in localstorage
           localStorage.setItem('token', response.data.sessionToken);
+          localStorage.setItem('email', response.data.user.email);
+          localStorage.setItem('isAdmin', response.data.isAdmin);
+          localStorage.setItem('userId', response.data.user.id);
+          this.props.history.replace('/poetry');
+
           // go to My Profile page
           this.props.history.push('/profile/mine/new');
         }
@@ -77,47 +109,48 @@ class SignUp extends Component<SignUpProps, SignUpState> {
   };
 
   render() {
+    const { errors } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={(event) => this.handleSubmit(event)}>
-        <Card body ClassName='auth-forms'>
-        <CardTitle tag="h3">Sign Up</CardTitle>
+          <Card body className="auth-forms">
+            <CardTitle tag="h3">Sign Up</CardTitle>
             <CardText tag="h6" className="text-success mb-3">
-            Hello Poem lovers, welcome to openMic Poem! Please create an account
-            to get Started.
+              Hello Poem lovers, welcome to openMic Poem! Please create an
+              account to get Started.
             </CardText>
-        <FormInput 
-          label="First Name" 
-          name="firstName"
-          value={this.state.signUpData.firstName}
-          onChange={(event:any) => this.handleChange(event)}
-          // error={errors.firstName}
-          />
-          <FormInput 
-          label="Last Name" 
-          name="lastName"
-          value={this.state.signUpData.lastName}
-          onChange={(event:any) => this.handleChange(event)}
-          // error={errors.firstName}
-          />
-          <FormInput 
-          label="Email" 
-          name="email"
-          value={this.state.signUpData.password}
-          onChange={(event:any) => this.handleChange(event)}
-          type="email"
-          // error={errors.email}
-          />
-          <FormInput 
-          label="Password" 
-          name="password"
-          value={this.state.signUpData.password}
-          onChange={(event:any) => this.handleChange(event)}
-          type="password"
-          // error={errors.password}
-          />
-        
-          {/* <Alert color="warning">
+            <FormInput
+              label="First Name"
+              name="firstName"
+              value={this.state.signUpData.firstName}
+              onChange={(event: any) => this.handleChange(event)}
+              error={errors.firstName}
+            />
+            <FormInput
+              label="Last Name"
+              name="lastName"
+              value={this.state.signUpData.lastName}
+              onChange={(event: any) => this.handleChange(event)}
+              error={errors.lastName}
+            />
+            <FormInput
+              label="Email"
+              name="email"
+              value={this.state.signUpData.email}
+              onChange={(event: any) => this.handleChange(event)}
+              type="email"
+              error={errors.email}
+            />
+            <FormInput
+              label="Password"
+              name="password"
+              value={this.state.signUpData.password}
+              onChange={(event: any) => this.handleChange(event)}
+              type="password"
+              error={errors.password}
+            />
+
+            {/* <Alert color="warning">
             <FormGroup>
               <Label for="exampleEmail" hidden>
                 First Name
@@ -177,7 +210,11 @@ class SignUp extends Component<SignUpProps, SignUpState> {
             </Button>
           </Card>
         </Form>
-        
+        <div className="m-2">
+          <p>
+            Already have an account? <Link to="/login">Login here</Link>.
+          </p>
+        </div>
       </React.Fragment>
     );
   }

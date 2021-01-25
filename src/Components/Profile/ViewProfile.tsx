@@ -10,6 +10,7 @@ import {
   Row,
   Col,
 } from 'reactstrap';
+import {Link} from 'react-router-dom'
 import UpdateProfile from './UpdateProfile';
 import { ProfileProps, ProfilePropsDefault } from './ProfileForm';
 import { BrowserRouterPropsType, profileFormFieldName } from '../../Common/TypeConfig';
@@ -180,10 +181,10 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
             </Row>
             <Row className="my-3">
               <Col>
-                <Button color="secondary" className="mr-2">
+                <i color="secondary" className="mr-2">
                   <i className="fas fa-file-download"></i>
                   Download Resume
-                </Button>
+                </i>
                 <Button color="primary" onClick={() => this.handleToggle()}>
                   <i className="fas fa-user-edit"></i>
                   Edit Profile

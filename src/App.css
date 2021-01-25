@@ -60,17 +60,46 @@
 }
 
 .category-padding {
+  color: #4c4f58;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
   width: 200px;
-  flex-wrap: nowrap;
-  padding: 3px, 3px, 3px, 3px;
-  background: rgb(196, 195, 195);
+  background: rgb(203, 241, 241);
 }
 
 .poemCard {
   width: 100%;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
 .comment-style {
   font-family: 'Playfair Display', serif;
+}
+
+.clickable {
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: #f0f1e9;
+}
+
+.heart-styling {
+  cursor: pointer;
+  color: rgb(156, 6, 6);
+}
+
+.plain-text {
+  display: block;
+  font-size: 1.2rem;
+  color: #212529;
+  margin: 2rem 0;
+  white-space: pre;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
+  overflow: auto;
+  -ms-overflow-style: scrollbar;
 }

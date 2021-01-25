@@ -45,8 +45,11 @@ class ViewRequest extends React.Component<ViewRequestProps, ViewRequestState> {
                     <tr>
                         <th>Poem Title</th>
                         <th>Author</th>
-                        <th>Poem Title</th>
-                        <th></th>
+                        <th>Status</th>
+                        <th>Original Content</th>
+                        <th>Vulgar Language</th>
+                        <th>Editor Comment</th>
+                        <th>Publication Approved</th>
                     </tr>
                 </thead>
             </table>

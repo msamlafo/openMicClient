@@ -11,7 +11,7 @@ import {
   ModalBody,
   ModalFooter,
 } from 'reactstrap';
-import { Poetry } from '../../Common/TypeConfig';
+import { Poetry, poetryCategory } from '../../Common/TypeConfig';
 
 type CreatePoemProps = {
   showModal: boolean;
@@ -25,7 +25,7 @@ type CreatePoemState = {
   createPoem: Poetry;
 };
 
-const poetryTypesList = [
+export const poetryTypesList = [
   'Blank verse',
   'Rhymed poetry',
   'Free verse',
@@ -42,24 +42,6 @@ const poetryTypesList = [
   'Soliloquy',
   'Villanelle',
 ];
-
-type poetryTypes =
-  | 'Choose Poetry Type'
-  | 'Blank verse'
-  | 'Rhymed poetry'
-  | 'Free verse'
-  | 'Epics'
-  | 'Narrative poetry'
-  | 'Haiku'
-  | 'Pastoral poetry'
-  | 'Sonnet'
-  | 'Elegies'
-  | 'Ode'
-  | 'Limerick'
-  | 'Lyric poetry'
-  | 'Ballad'
-  | 'Soliloquy'
-  | 'Villanelle';
 
 class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
 
@@ -105,7 +87,7 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                       key={index}
                       selected={poem.category === type}
                     >
-                      {type as poetryTypes}
+                      {type as poetryCategory}
                     </option>
                   ))}
                 </CustomInput>

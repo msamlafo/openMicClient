@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { clearSession } from '../Common/Environment';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
+import { clearSession } from '../Common/Utility';
 
 type SignOutProps = BrowserRouterPropsType & {
     
