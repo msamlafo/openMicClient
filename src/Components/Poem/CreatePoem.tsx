@@ -47,7 +47,7 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
 
 
   render() {
-    const {poem,showModal, onChange, onSubmit, onToggle,} = this.props;
+    const {poem, showModal, onChange, onSubmit, onToggle,} = this.props;
     return (
       <div className="container">
         <Form>
@@ -65,7 +65,7 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                   type="text"
                   placeholder="Title"
                   name="title"
-                  value={poem.title}
+                  value={poem?.title}
                   onChange={(event) => onChange(event)}
                 ></Input>
               </FormGroup>

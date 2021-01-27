@@ -12,6 +12,7 @@ import ViewProfile from './Components/Profile/ViewProfile';
 import NotFound from './Auth/NotFound';
 import Welcome from './Common/Welcome';
 import SignOut from './Auth/SignOut';
+import ViewIssue from './Components/Issue/ViewIssue';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/poetry/:poetryId" exact component={ViewPoem} />
         <Route path="/poetry" exact component={ViewAllPoems} />
         <Route path="/profile/mine" component={ViewProfile} />
+        <Route path="/issue" component={ViewIssue} />
         <Route path="/welcome" component={Welcome} />
         <Route path="/notFound" component={NotFound} />
         <Redirect from="/" exact to="/poetry"/>

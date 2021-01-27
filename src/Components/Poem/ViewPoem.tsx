@@ -7,6 +7,7 @@ import {
   CardText,
   CardSubtitle,
 } from 'reactstrap';
+import { Link } from 'react-router-dom';
 import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import UpdatePoem from './UpdatePoem';
 import DeletePoem from './DeletePoem';
@@ -17,13 +18,19 @@ import {
   BrowserRouterPropsType,
   Comment,
   userAvatar,
+  issueType,
+  issueFormField,
+  IssueDefaultObject,
 } from '../../Common/TypeConfig';
 import ViewAllComment from '../Comments/ViewAllComment';
 import { BASE_API_URL } from '../../Common/Environment';
-import { isOwner } from '../../Common/Utility';
+import { getLoginToken, isOwner } from '../../Common/Utility';
+import CreateIssue from '../Issue/CreateIssue';
 
+// Prop Type
 type ViewPoemProps = BrowserRouterPropsType & {};
 
+// State Type
 type ViewPoemState = {
   poetry: Poetry;
   poetryToEdit: Poetry;
@@ -33,9 +40,9 @@ type ViewPoemState = {
   authorPic?: string;
   reload: boolean;
   user: object;
+  issue: issueType;
+  showIssueModal: boolean;
 };
-
- 
 
 class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   constructor(props: ViewPoemProps) {
@@ -48,6 +55,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       showUpdateModal: false,
       reload: false,
       user: {},
+      issue: IssueDefaultObject,
+      showIssueModal: false,
     };
   }
 
@@ -90,8 +99,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     fetch(`${API_URL}`, {
       method: 'GET',
       headers: new Headers({
-        'Content-Type': 'applicaiton/json',
-        Authorization: localStorage.getItem('token') || '',
+        'Content-Type': 'application/json',
+        Authorization: getLoginToken(),
       }),
     })
       .then((result) => result.json())
@@ -127,11 +136,11 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       this.getPoem();
     }
   };
-  
+
   handleCreateToggle = () => {
     this.setState({ showCreateModal: !this.state.showCreateModal });
   };
-  
+
   handleUpdateToggle = () => {
     this.setState({ showUpdateModal: !this.state.showUpdateModal });
   };
@@ -164,6 +173,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     updatePoem();
   };
 
+
   handleCreate = () => {
     this.handleCreateToggle();
   };
@@ -181,6 +191,46 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     this.setState({ poetryToEdit });
   };
 
+  handleIssueSubmit = (event: React.SyntheticEvent) => {
+    event.preventDefault();
+    const createIssue = {
+      issue: this.state.issue.issue,
+      poetryId: this.state.poetry.id,
+      //userId: this.state.issue.authorId,
+    };
+    const API_URL = `${process.env.REACT_APP_URL}/issue`;
+    fetch(`${API_URL}`, {
+      method: 'POST',
+      body: JSON.stringify(createIssue),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        Authorization: getLoginToken(),
+      }),
+    })
+      .then((result) => result.json())
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          const { data } = response;
+          const issue = data;
+          this.setState({ issue });
+        }
+      });
+  };
+
+  handleIssueToggle = () => {
+    this.setState({ showIssueModal: !this.state.showIssueModal });
+  };
+
+  handleIssueChange = (
+    event: React.FormEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    const value = event.currentTarget.value;
+    const issue = { ...this.state.issue };
+    issue[event.currentTarget.name as issueFormField] = value;
+    this.setState({ issue });
+  };
+
   renderPoem() {
     const { poetry } = this.state;
     return poetry.id === 0 ? (
@@ -189,9 +239,9 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
           <ToastHeader>openMic Poems</ToastHeader>
           <ToastBody>You do not have any poems. Create a new poem</ToastBody>
           {/* insert CreatePoem button here */}
-          <Button onClick={() => this.handleCreateToggle()} color="dark">
+          <Link className="btn btn-small" to="/poetry/create">
             Create poem
-          </Button>
+          </Link>
         </Toast>
       </div>
     ) : (
@@ -238,7 +288,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   render() {
     return (
-      <main className="container">
+      <div className="container">
         {this.renderPoem()}
         <UpdatePoem
           poem={this.state.poetryToEdit}
@@ -247,7 +297,14 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
           onChange={this.handleChange}
           onSubmit={this.handleUpdate}
         />
-      </main>
+        <CreateIssue
+          onChange={this.handleIssueChange}
+          onSubmit={this.handleIssueSubmit}
+          issue={this.state.issue}
+          isOpen={this.state.showIssueModal}
+          onToggle={this.handleIssueToggle}
+        />
+      </div>
     );
   }
 }

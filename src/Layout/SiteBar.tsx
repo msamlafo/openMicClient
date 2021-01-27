@@ -37,6 +37,11 @@ class SiteBar extends Component<SiteBarProps, SiteBarState> {
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav className="ml-auto" navbar>
+            <NavItem>
+                <NavLink className="nav-link" to="/issue" exact>
+                  Issue Table
+                </NavLink>
+              </NavItem>
               <NavItem>
                 <NavLink className="nav-link" to="/poetry" exact>
                   All Poems
@@ -52,7 +57,7 @@ class SiteBar extends Component<SiteBarProps, SiteBarState> {
                   <DropdownToggle nav>
                     <i className="fa fa-user-circle" />
                   </DropdownToggle>
-                  <DropdownMenu right className="bg-dark">
+                  <DropdownMenu right className="bg-dark p-0">
                     <DropdownItem className="bg-dark">
                       <NavLink className="nav-link" to="/profile/mine">
                         Profile
