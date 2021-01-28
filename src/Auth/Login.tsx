@@ -4,7 +4,7 @@ import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
 import { BASE_API_URL } from '../Common/Environment';
 import FormInput from '../Common/FormInput';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
-import { hasLoginToken } from '../Common/Utility';
+import GuestLayoutFormHeader from '../Layout/GuestLayoutFormHeader';
 type LoginProps = BrowserRouterPropsType & {};
 
 type loginField = 'email' | 'password';
@@ -31,12 +31,6 @@ class Login extends Component<LoginProps, LoginState> {
       errors: {},
     };
   }
-
-  componentDidMount = () => {
-    if (hasLoginToken()) {
-      this.props.history.go(-1);
-    }
-  };
 
   validate = () => {
     let errors: any = {};
@@ -97,17 +91,21 @@ class Login extends Component<LoginProps, LoginState> {
       <React.Fragment>
         <Form onSubmit={(event) => this.handleSubmit(event)}>
           <Card body className="auth-forms">
+          <GuestLayoutFormHeader />
             <CardTitle tag="h3">Login</CardTitle>
             <CardText tag="h6" className="text-success mb-3">
               Hello Poem lovers. This is the Login Page
             </CardText>
             <FormInput
-              label="Email"
+              label="Email Address"
               name="email"
               value={loginData.email}
               onChange={this.handleChange}
               type="email"
               error={errors.email}
+              hideLabel={true}
+              required={true}
+              inputClass="top-rounded-corners"
             />
             <FormInput
               label="Password"
@@ -116,6 +114,8 @@ class Login extends Component<LoginProps, LoginState> {
               onChange={this.handleChange}
               type="password"
               error={errors.password}
+              required={true}
+              hideLabel={true}
             />
             <Button type="submit" color="primary">
               Login

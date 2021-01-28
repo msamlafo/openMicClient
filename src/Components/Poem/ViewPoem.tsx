@@ -40,7 +40,7 @@ type ViewPoemState = {
   authorPic?: string;
   reload: boolean;
   user: object;
-  issue: issueType;
+  
   showIssueModal: boolean;
 };
 
@@ -55,7 +55,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
       showUpdateModal: false,
       reload: false,
       user: {},
-      issue: IssueDefaultObject,
       showIssueModal: false,
     };
   }
@@ -141,6 +140,10 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     this.setState({ showCreateModal: !this.state.showCreateModal });
   };
 
+  handleCreate = () => {
+    this.handleCreateToggle();
+  };
+  
   handleUpdateToggle = () => {
     this.setState({ showUpdateModal: !this.state.showUpdateModal });
   };
@@ -174,9 +177,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   };
 
 
-  handleCreate = () => {
-    this.handleCreateToggle();
-  };
 
   handleReload = () => {
     this.setState({ reload: true });
@@ -191,44 +191,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     this.setState({ poetryToEdit });
   };
 
-  handleIssueSubmit = (event: React.SyntheticEvent) => {
-    event.preventDefault();
-    const createIssue = {
-      issue: this.state.issue.issue,
-      poetryId: this.state.poetry.id,
-      //userId: this.state.issue.authorId,
-    };
-    const API_URL = `${process.env.REACT_APP_URL}/issue`;
-    fetch(`${API_URL}`, {
-      method: 'POST',
-      body: JSON.stringify(createIssue),
-      headers: new Headers({
-        'Content-Type': 'application/json',
-        Authorization: getLoginToken(),
-      }),
-    })
-      .then((result) => result.json())
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          const { data } = response;
-          const issue = data;
-          this.setState({ issue });
-        }
-      });
-  };
-
   handleIssueToggle = () => {
     this.setState({ showIssueModal: !this.state.showIssueModal });
-  };
-
-  handleIssueChange = (
-    event: React.FormEvent<HTMLSelectElement | HTMLInputElement>
-  ) => {
-    const value = event.currentTarget.value;
-    const issue = { ...this.state.issue };
-    issue[event.currentTarget.name as issueFormField] = value;
-    this.setState({ issue });
   };
 
   renderPoem() {
@@ -297,13 +261,13 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
           onChange={this.handleChange}
           onSubmit={this.handleUpdate}
         />
-        <CreateIssue
+        {/* <CreateIssue
           onChange={this.handleIssueChange}
           onSubmit={this.handleIssueSubmit}
           issue={this.state.issue}
           isOpen={this.state.showIssueModal}
           onToggle={this.handleIssueToggle}
-        />
+        /> */}
       </div>
     );
   }

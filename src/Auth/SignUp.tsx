@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
-// import Joi from "joi-browser";
 import FormInput from '../Common/FormInput';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
-import { hasLoginToken } from '../Common/Utility';
+import GuestLayoutFormHeader from '../Layout/GuestLayoutFormHeader';
 
 type SignUpProps = BrowserRouterPropsType & {
   errors: any;
@@ -35,12 +34,6 @@ class SignUp extends Component<SignUpProps, SignUpState> {
       errors: {},
     };
   }
-
-  componentDidMount = () => {
-    if (hasLoginToken()) {
-      this.props.history.go(-1);
-    }
-  };
 
   validate = () => {
     let errors: any = {};
@@ -114,6 +107,7 @@ class SignUp extends Component<SignUpProps, SignUpState> {
       <React.Fragment>
         <Form onSubmit={(event) => this.handleSubmit(event)}>
           <Card body className="auth-forms">
+            <GuestLayoutFormHeader />
             <CardTitle tag="h3">Sign Up</CardTitle>
             <CardText tag="h6" className="text-success mb-3">
               Hello Poem lovers, welcome to openMic Poem! Please create an
@@ -125,6 +119,9 @@ class SignUp extends Component<SignUpProps, SignUpState> {
               value={this.state.signUpData.firstName}
               onChange={(event: any) => this.handleChange(event)}
               error={errors.firstName}
+              hideLabel={true}
+              required={true}
+              autofocus={true}
             />
             <FormInput
               label="Last Name"
@@ -132,14 +129,18 @@ class SignUp extends Component<SignUpProps, SignUpState> {
               value={this.state.signUpData.lastName}
               onChange={(event: any) => this.handleChange(event)}
               error={errors.lastName}
+              required={true}
+              hideLabel={true}
             />
             <FormInput
-              label="Email"
+              label="Email Address"
               name="email"
               value={this.state.signUpData.email}
               onChange={(event: any) => this.handleChange(event)}
               type="email"
               error={errors.email}
+              required={true}
+              hideLabel={true}
             />
             <FormInput
               label="Password"
@@ -148,63 +149,9 @@ class SignUp extends Component<SignUpProps, SignUpState> {
               onChange={(event: any) => this.handleChange(event)}
               type="password"
               error={errors.password}
+              required={true}
+              hideLabel={true}
             />
-
-            {/* <Alert color="warning">
-            <FormGroup>
-              <Label for="exampleEmail" hidden>
-                First Name
-              </Label>
-              <Input
-                id="exampleEmail"
-                placeholder="First Name"
-                name="firstName"
-                type="text"
-                value={this.state.signUpData.firstName}
-                onChange={(event) => this.handleChange(event)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleEmail" hidden>
-                Last Name
-              </Label>
-              <Input
-                id="exampleEmail"
-                placeholder="Last Name"
-                name="lastName"
-                type="text"
-                value={this.state.signUpData.lastName}
-                onChange={(event) => this.handleChange(event)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="exampleEmail" hidden>
-                Email
-              </Label>
-              <Input
-                id="exampleEmail"
-                placeholder="Email"
-                name="email"
-                type="email"
-                value={this.state.signUpData.email}
-                onChange={(event) => this.handleChange(event)}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="examplePassword" hidden>
-                Password
-              </Label>
-              <Input
-                id="examplePassword"
-                placeholder="Password"
-                name="password"
-                type="password"
-                value={this.state.signUpData.password}
-                onChange={(event) => this.handleChange(event)}
-              />
-            </FormGroup>
-            {''}
-          </Alert> */}
             <Button type="submit" color="primary">
               Sign Up
             </Button>
