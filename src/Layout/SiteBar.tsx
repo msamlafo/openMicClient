@@ -3,14 +3,19 @@ import Header from './Header';
 import MainMenuLinks from './MainMenuLinks';
 import UserMenu from './UserMenu';
 
-type SiteBarProps = {};
+type SiteBarProps = {
+  collapsed: boolean;
+  toggleNavbar: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+};
 
-const SiteBar: React.SFC<SiteBarProps> = () => {
+const SiteBar: React.FC<SiteBarProps> = (props) => {
   return (
     <div>
-      <Header>
+      <Header collapsed={props.collapsed} toggleNavbar={props.toggleNavbar}>
         <MainMenuLinks />
-        <UserMenu />
+        <UserMenu inNavbar={true}/>
       </Header>
     </div>
   );

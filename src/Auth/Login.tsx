@@ -4,6 +4,7 @@ import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
 import { BASE_API_URL } from '../Common/Environment';
 import FormInput from '../Common/FormInput';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
+import { createAuthIdentity, getHomePage } from '../Common/Utility';
 import GuestLayoutFormHeader from '../Layout/GuestLayoutFormHeader';
 type LoginProps = BrowserRouterPropsType & {};
 
@@ -65,13 +66,11 @@ class Login extends Component<LoginProps, LoginState> {
     })
       .then((result) => result.json())
       .then((response) => {
-        if (response.status === 200) {
-          console.log(response);
-          localStorage.setItem('token', response.data.sessionToken);
-          localStorage.setItem('email', response.data.user.email);
-          localStorage.setItem('isAdmin', response.data.isAdmin);
-          localStorage.setItem('userId', response.data.user.id);
-          this.props.history.replace('/poetry');
+        console.log(response);
+        const { status, data } = response;
+        if (status === 200) {
+          createAuthIdentity(data);
+          this.props.history.replace(getHomePage());
         }
       })
       .catch((error) => console.log(error));
@@ -91,7 +90,7 @@ class Login extends Component<LoginProps, LoginState> {
       <React.Fragment>
         <Form onSubmit={(event) => this.handleSubmit(event)}>
           <Card body className="auth-forms">
-          <GuestLayoutFormHeader />
+            <GuestLayoutFormHeader />
             <CardTitle tag="h3">Login</CardTitle>
             <CardText tag="h6" className="text-success mb-3">
               Hello Poem lovers. This is the Login Page

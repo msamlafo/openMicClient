@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Form, Button, Card, CardTitle, CardText } from 'reactstrap';
+import { BASE_API_URL } from '../Common/Environment';
 import FormInput from '../Common/FormInput';
 import { BrowserRouterPropsType } from '../Common/TypeConfig';
+import { createAuthIdentity } from '../Common/Utility';
 import GuestLayoutFormHeader from '../Layout/GuestLayoutFormHeader';
 
 type SignUpProps = BrowserRouterPropsType & {
@@ -60,7 +62,7 @@ class SignUp extends Component<SignUpProps, SignUpState> {
     console.log(errors);
     if (errors) return;
 
-    const API_URL = 'http://localhost:4000/user/signup';
+    const API_URL = `${BASE_API_URL}/user/signup`;
     console.log('submit sign up info', this.state.signUpData);
 
     fetch(`${API_URL}`, {
@@ -77,13 +79,11 @@ class SignUp extends Component<SignUpProps, SignUpState> {
     })
       .then((result) => result.json())
       .then((response) => {
-        if (response.status === 200) {
+        console.log(response);
+        const { status, data } = response;
+        if (status === 200) {
           // set / update the token in localstorage
-          localStorage.setItem('token', response.data.sessionToken);
-          localStorage.setItem('email', response.data.user.email);
-          localStorage.setItem('isAdmin', response.data.isAdmin);
-          localStorage.setItem('userId', response.data.user.id);
-          this.props.history.replace('/poetry');
+          createAuthIdentity(data);
 
           // go to My Profile page
           this.props.history.push('/profile/mine/new');

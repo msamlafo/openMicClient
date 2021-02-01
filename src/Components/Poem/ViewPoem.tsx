@@ -7,8 +7,6 @@ import {
   CardText,
   CardSubtitle,
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import { Toast, ToastBody, ToastHeader } from 'reactstrap';
 import UpdatePoem from './UpdatePoem';
 import DeletePoem from './DeletePoem';
 import {
@@ -18,14 +16,10 @@ import {
   BrowserRouterPropsType,
   Comment,
   userAvatar,
-  issueType,
-  issueFormField,
-  IssueDefaultObject,
 } from '../../Common/TypeConfig';
 import ViewAllComment from '../Comments/ViewAllComment';
 import { BASE_API_URL } from '../../Common/Environment';
 import { getLoginToken, isOwner } from '../../Common/Utility';
-import CreateIssue from '../Issue/CreateIssue';
 
 // Prop Type
 type ViewPoemProps = BrowserRouterPropsType & {};
@@ -40,7 +34,7 @@ type ViewPoemState = {
   authorPic?: string;
   reload: boolean;
   user: object;
-  
+
   showIssueModal: boolean;
 };
 
@@ -60,17 +54,21 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   }
 
   getPoetryStateObjectFromRawPoemData = (poetry: any): Poetry => {
-    return {
-      id: poetry.id,
-      title: poetry.title,
-      author:
-        poetry.user?.profile?.firstName + ' ' + poetry.user?.profile?.lastName,
-      category: poetry.category,
-      writeUp: poetry.writeUp,
-      poemWriterComment: poetry.poemWriterComment,
-      authorPic: poetry.user.profile.picUrl || userAvatar,
-      authorId: poetry.user.id,
-    };
+    return poetry
+      ? {
+          id: poetry.id,
+          title: poetry.title,
+          author:
+            poetry.user?.profile?.firstName +
+            ' ' +
+            poetry.user?.profile?.lastName,
+          category: poetry.category,
+          writeUp: poetry.writeUp,
+          poemWriterComment: poetry.poemWriterComment,
+          authorPic: poetry.user.profile.picUrl || userAvatar,
+          authorId: poetry.user.id,
+        }
+      : PoetryDefaultObject;
   };
 
   getCommentsObjectFromPoem = (poetry: any): Comment[] => {
@@ -107,7 +105,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
         console.log(response);
         const { data, status } = response;
         if (status === 200) {
-          const poetry = data
+           const poetry = data
             ? this.getPoetryStateObjectFromRawPoemData(response.data)
             : PoetryDefaultObject;
           const comments = data?.comments
@@ -120,6 +118,9 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
             comments,
             reload: false,
           });
+          if(poetry.id === 0){
+            this.props.history.push('/poetry')
+          }
         }
       })
       .catch((err) => console.log(err));
@@ -127,6 +128,10 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   componentDidMount() {
     this.getPoem();
+    console.log(this.state)
+    if(this.state.poetry.id ===0){
+      //this.props.history.push('/poetry')
+    }
   }
 
   componentDidUpdate = () => {
@@ -143,7 +148,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
   handleCreate = () => {
     this.handleCreateToggle();
   };
-  
+
   handleUpdateToggle = () => {
     this.setState({ showUpdateModal: !this.state.showUpdateModal });
   };
@@ -176,8 +181,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     updatePoem();
   };
 
-
-
   handleReload = () => {
     this.setState({ reload: true });
   };
@@ -197,18 +200,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   renderPoem() {
     const { poetry } = this.state;
-    return poetry.id === 0 ? (
-      <div className="p-3 bg-info my-2 rounded">
-        <Toast>
-          <ToastHeader>openMic Poems</ToastHeader>
-          <ToastBody>You do not have any poems. Create a new poem</ToastBody>
-          {/* insert CreatePoem button here */}
-          <Link className="btn btn-small" to="/poetry/create">
-            Create poem
-          </Link>
-        </Toast>
-      </div>
-    ) : (
+    return (
       <React.Fragment>
         <Card body outline className="m-2">
           <CardTitle tag="h3" className="text-capitalize">
@@ -261,13 +253,6 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
           onChange={this.handleChange}
           onSubmit={this.handleUpdate}
         />
-        {/* <CreateIssue
-          onChange={this.handleIssueChange}
-          onSubmit={this.handleIssueSubmit}
-          issue={this.state.issue}
-          isOpen={this.state.showIssueModal}
-          onToggle={this.handleIssueToggle}
-        /> */}
       </div>
     );
   }

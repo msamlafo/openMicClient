@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { Button } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 export type DeletePoemProps = {
   poetryId: number;
   onReload: () => void;
 };
 
-export type DeletePoemState = {};
+export type DeletePoemState = {
+  showModal: boolean;
+};
 
-class DeletePoem extends React.Component<DeletePoemProps, {}> {
+class DeletePoem extends React.Component<DeletePoemProps, DeletePoemState> {
   constructor(props: DeletePoemProps) {
     super(props);
-    this.state = {};
+    this.state = { showModal: false };
   }
 
   handleDeletePoem = (event: React.SyntheticEvent) => {
@@ -35,12 +37,36 @@ class DeletePoem extends React.Component<DeletePoemProps, {}> {
       .catch((err) => console.log(err));
   };
 
+  handleToggle = () => {
+    this.setState({ showModal: !this.state.showModal });
+  };
   render() {
+    const { showModal } = this.state;
     return (
       <div className="d-inline-block">
-        <Button color="danger" onClick={(event) => this.handleDeletePoem(event)}>
-        <i className="fa fa-trash" /> Delete Poem
-      </Button>
+        <Button color="danger" onClick={this.handleToggle}>
+          <i className="fa fa-trash" /> Delete Poem
+        </Button>
+        <Modal isOpen={showModal} toggle={this.handleToggle}>
+          <ModalHeader toggle={this.handleToggle} charCode="X">
+            <i className="fa fa-exclamation-triangle"></i> Caution
+          </ModalHeader>
+          <ModalBody>
+            <h3>Are you sure you want to delete this?</h3>
+            <small className="text-muted">This action is irreversible</small>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" onClick={this.handleToggle}>
+              Cancel
+            </Button>{' '}
+            <Button
+              color="danger"
+              onClick={(event) => this.handleDeletePoem(event)}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }
