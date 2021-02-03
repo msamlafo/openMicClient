@@ -159,7 +159,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
     const updateData = this.state.poetryToEdit;
 
     const updatePoem = () => {
-      const API_URL = `${process.env.REACT_APP_API_URL}/poetry/${updateData.id}`;
+      const API_URL = `${BASE_API_URL}/poetry/${updateData.id}`;
       fetch(`${API_URL}`, {
         method: 'PUT',
         body: JSON.stringify(updateData),

@@ -7,7 +7,7 @@ export interface SearchBoxProps {
     name: string;
 }
  
-const SearchBox: React.SFC<SearchBoxProps> = ({placeHolder, value, onChange, name}) => {
+const SearchBox: React.FC<SearchBoxProps> = ({placeHolder, value, onChange, name}) => {
     return ( 
         <input className="form-control my-4"
             placeholder={placeHolder} type="text" value={value} onChange={e => onChange(e.currentTarget.value)} name={name}  />

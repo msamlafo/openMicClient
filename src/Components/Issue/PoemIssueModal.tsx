@@ -1,10 +1,8 @@
 import * as React from 'react';
 import {
-  Button,
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Card,
   Badge,
   CardTitle,

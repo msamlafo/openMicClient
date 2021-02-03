@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { BASE_API_URL } from '../../Common/Environment';
 
 export type DeletePoemProps = {
   poetryId: number;
@@ -18,7 +19,7 @@ class DeletePoem extends React.Component<DeletePoemProps, DeletePoemState> {
 
   handleDeletePoem = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    const API_URL = `${process.env.REACT_APP_API_URL}/poetry/${this.props.poetryId}`;
+    const API_URL = `${BASE_API_URL}/poetry/${this.props.poetryId}`;
 
     fetch(`${API_URL}`, {
       method: 'DELETE',

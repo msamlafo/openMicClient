@@ -17,6 +17,7 @@ import {
   profileFormFieldName,
 } from '../../Common/TypeConfig';
 import { getLoginToken } from '../../Common/Utility';
+import { BASE_API_URL } from '../../Common/Environment';
 
 export type ViewProfileProps = BrowserRouterPropsType & {};
 
@@ -41,7 +42,7 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
   }
 
   getProfile = () => {
-    const API_URL = `${process.env.REACT_APP_API_URL}/profile/mine`;
+    const API_URL = `${BASE_API_URL}/profile/mine`;
     const params = this.props.match.params;
     const heading =
       params && params.type === 'new'

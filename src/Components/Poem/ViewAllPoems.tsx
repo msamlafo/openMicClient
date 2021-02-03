@@ -27,6 +27,7 @@ import ListGroup from '../../Common/ListGroup';
 import { getCategories } from './PoemCategory';
 import SearchBox from '../../Common/SearchBox';
 import { hasLoginToken } from '../../Common/Utility';
+import { BASE_API_URL } from '../../Common/Environment';
 // import CreateComment from './CreateComment';
 
 type ViewAllPoemsProps = BrowserRouterPropsType & {};
@@ -77,7 +78,7 @@ class ViewAllPoems extends React.Component<
   getPoems = () => {
     const path = this.props.match.path;
     const extraPath = path === '/poetry/mine' ? '/mine' : '';
-    const API_URL = `${process.env.REACT_APP_API_URL}/poetry${extraPath}`;
+    const API_URL = `${BASE_API_URL}/poetry${extraPath}`;
 
     fetch(`${API_URL}`, {
       method: 'GET',

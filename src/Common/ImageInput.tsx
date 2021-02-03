@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FormGroup, Label, Col, Input } from 'reactstrap';
+import { BASE_API_URL, Cloudinary_API_URL } from './Environment';
 
 type ImageInputProps = {
   label: string;
@@ -40,11 +41,11 @@ class ImageInput extends Component<ImageInputProps, ImageInputState> {
 
   handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
-    const CLOUD_URL = 'https://api.cloudinary.com/v1_1/dcfmnomqh/image/upload';
+    const CLOUD_URL = Cloudinary_API_URL;
 
-    const API_URL_CLOUDSIGN = `${process.env.REACT_APP_API_URL}/profile/cloudsign`;
+    const API_URL_CLOUDSIGN = `${BASE_API_URL}/profile/cloudsign`;
 
-    const API_URL_IMAGESET = `${process.env.REACT_APP_API_URL}/profile/imageset`;
+    const API_URL_IMAGESET = `${BASE_API_URL}/profile/imageset`;
 
     // get the cloudinary upload signature
     const response = await fetch(API_URL_CLOUDSIGN, {

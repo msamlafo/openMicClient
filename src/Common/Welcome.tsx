@@ -5,7 +5,7 @@ export interface WelcomeProps {
     
 }
  
-const Welcome: React.SFC<WelcomeProps> = () => {
+const Welcome: React.FC<WelcomeProps> = () => {
     return ( 
         <Jumbotron fluid>
         <Container fluid>

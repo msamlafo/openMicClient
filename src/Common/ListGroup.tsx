@@ -7,7 +7,7 @@ type ListGroupProps = {
   selectedItem: any;
 };
 
-const ListGroup: React.SFC<ListGroupProps> = (props) => {
+const ListGroup: React.FC<ListGroupProps> = (props) => {
   const { items, textProperty = 'name', selectedItem, onItemSelect } = props;
   return (
     <ul className="list-group">
