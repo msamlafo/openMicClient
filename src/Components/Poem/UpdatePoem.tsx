@@ -54,30 +54,29 @@ class UpdatePoem extends React.Component<UpdatePoemProps, {}> {
                   />
                 </Col>
               </FormGroup>
-              <FormGroup>
-                <Label for="category" hidden>
+              <FormGroup row>
+                <Label for="category" sm={2}>
                   Category
                 </Label>
-                <CustomInput
-                  type="select"
-                  id="category"
-                  name="category"
-                  value={poem.category}
-                  onChange={(event) => onChange(event)}
-                >
-                  <option value={poem.category}>
-                    Select Category
-                  </option>
-                  {poetryTypesList.map((type: string, index: number) => (
-                    <option
-                      key={index}
-                      selected={poem.category === type}
-                    >
-                      {type as poetryCategory}
-                    </option>
-                  ))}
-                </CustomInput>
-                </FormGroup>
+                <Col>
+                  <CustomInput
+                    type="select"
+                    id="category"
+                    name="category"
+                    value={poem.category}
+                    onChange={(event) => onChange(event)}
+                  >
+                    {poem.category === '' && (
+                      <option value=''>Select Category</option>
+                    )}
+                    {poetryTypesList.map((type: string, index: number) => (
+                      <option key={index} selected={poem.category === type}>
+                        {type as poetryCategory}
+                      </option>
+                    ))}
+                  </CustomInput>
+                </Col>
+              </FormGroup>
               <FormGroup row>
                 <Label for="exampleEmail" sm={2}>
                   Write Up
@@ -109,7 +108,11 @@ class UpdatePoem extends React.Component<UpdatePoemProps, {}> {
               </FormGroup>
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" type="submit" onClick={(event) => onSubmit(event)}>
+              <Button
+                color="primary"
+                type="submit"
+                onClick={(event) => onSubmit(event)}
+              >
                 Update poem
               </Button>{' '}
               <Button color="secondary" onClick={(e) => onToggle(e)}>

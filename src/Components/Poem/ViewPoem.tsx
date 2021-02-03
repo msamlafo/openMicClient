@@ -105,7 +105,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
         console.log(response);
         const { data, status } = response;
         if (status === 200) {
-           const poetry = data
+          const poetry = data
             ? this.getPoetryStateObjectFromRawPoemData(response.data)
             : PoetryDefaultObject;
           const comments = data?.comments
@@ -118,8 +118,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
             comments,
             reload: false,
           });
-          if(poetry.id === 0){
-            this.props.history.push('/poetry')
+          if (poetry.id === 0) {
+            this.props.history.push('/poetry');
           }
         }
       })
@@ -128,8 +128,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
 
   componentDidMount() {
     this.getPoem();
-    console.log(this.state)
-    if(this.state.poetry.id ===0){
+    console.log(this.state);
+    if (this.state.poetry.id === 0) {
       //this.props.history.push('/poetry')
     }
   }
@@ -172,9 +172,8 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
         .then((response) => {
           console.log(response);
           if (response.status === 200) {
-            console.log('hurray component is next');
             this.handleUpdateToggle();
-            return this.props.history.push('/ViewPoem');
+            this.handleReload();
           }
         });
     };

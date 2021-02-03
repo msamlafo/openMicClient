@@ -79,9 +79,9 @@ class CreatePoem extends Component<CreatePoemProps, CreatePoemState> {
                   name="category"
                   onChange={(event) => onChange(event)}
                 >
-                  <option value={poem.category}>
-                    Select Category
-                  </option>
+                  {poem.category === '' && (
+                      <option value=''>Select Category</option>
+                    )}
                   {poetryTypesList.map((type: string, index: number) => (
                     <option
                       key={index}
