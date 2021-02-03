@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FormGroup, Label, Col, Input } from 'reactstrap';
 import { BASE_API_URL, Cloudinary_API_URL } from './Environment';
+import { getLoginToken } from './Utility';
 
 type ImageInputProps = {
   label: string;
@@ -21,8 +22,6 @@ class ImageInput extends Component<ImageInputProps, ImageInputState> {
     };
   }
 
-  fileInput = React.createRef();
-
   handleChange = (e: any) => {
     const file = e.target.files[0];
     this.props.onChange(e);
@@ -42,9 +41,7 @@ class ImageInput extends Component<ImageInputProps, ImageInputState> {
   handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
     const CLOUD_URL = Cloudinary_API_URL;
-
     const API_URL_CLOUDSIGN = `${BASE_API_URL}/profile/cloudsign`;
-
     const API_URL_IMAGESET = `${BASE_API_URL}/profile/imageset`;
 
     // get the cloudinary upload signature
@@ -56,17 +53,13 @@ class ImageInput extends Component<ImageInputProps, ImageInputState> {
     });
     const { data, status } = await response.json();
 
-    // was the signature successfully fetched? 
-    if (status === 200) { // Yes
+    // was the signature successfully fetched?
+    if (status === 200) {
       // upload the file to cloudinary with the signature and timestamp
       const { sig, ts } = data;
-      console.log(sig, ts);
-
       const file = this.state.previewSource;
 
-      console.log(file);
       const formData = new FormData();
-
       formData.append('file', file);
       formData.append('upload_preset', 'openMic');
       formData.append('api_key', '223952152215851');
@@ -81,15 +74,12 @@ class ImageInput extends Component<ImageInputProps, ImageInputState> {
       ).json();
       console.log(result);
 
-      // check if the upload was successful
-
-
       // save the secure URL in the database
       const final = await (
         await fetch(API_URL_IMAGESET, {
           method: 'PUT',
           headers: {
-            Authorization: localStorage.getItem('token') || '',
+            Authorization: getLoginToken(),
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ url: result.secure_url }),

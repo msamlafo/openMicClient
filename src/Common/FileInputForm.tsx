@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input, FormGroup, Label, Col } from 'reactstrap';
-import { BASE_API_URL, CLOUD_URL, CLOUDINARY_API_KEY } from './Environment';
+import { BASE_API_URL, CLOUDINARY_API_KEY, Cloudinary_API_URL } from './Environment';
+import { getLoginToken } from './Utility';
 
 export type FileInputFormProps = {
   label: string;
@@ -37,7 +38,7 @@ class FileInputForm extends React.Component<
       await fetch(API_URL_CLOUDSIGN, {
         method: 'GET',
         headers: {
-          Authorization: localStorage.getItem('token') || '',
+          Authorization: getLoginToken(),
         },
       })
     ).json();
@@ -55,15 +56,13 @@ class FileInputForm extends React.Component<
     const { signature, timestamp } = this.state;
 
     const formData = new FormData();
-
     formData.append('file', file);
     formData.append('upload_preset', 'openMic');
     formData.append('api_key', CLOUDINARY_API_KEY);
     formData.append('signature', signature);
     formData.append('timestamp', timestamp);
 
-    console.log(CLOUD_URL);
-    const responeObject = await fetch(CLOUD_URL, {
+    const responeObject = await fetch(Cloudinary_API_URL, {
       method: 'POST',
       body: formData,
     });
@@ -88,7 +87,7 @@ class FileInputForm extends React.Component<
         method: 'PUT',
         body: JSON.stringify({ url }),
         headers: {
-          Authorization: localStorage.getItem('token') || '',
+          Authorization: getLoginToken(),
           'Content-Type': 'application/json',
         },
       })

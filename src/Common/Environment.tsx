@@ -1,5 +1,5 @@
 export const Cloudinary_API_URL =
-  'https://api.cloudinary.com/v1_1/dcfmnomqh/image/upload';
+  'https://api.cloudinary.com/v1_1/dcfmnomqh/auto/upload';
 
 export const CLOUD_URL = process.env.REACT_APP_CLOUD_URL || '';
 
