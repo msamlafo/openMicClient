@@ -4,6 +4,7 @@ import FormInput from '../../Common/FormInput';
 import FormGroupButton from '../../Common/FormGroupButton';
 import FileInputForm from '../../Common/FileInputForm';
 import { getLoginToken } from '../../Common/Utility';
+import { BASE_API_URL } from '../../Common/Environment';
 
 export type ProfileProps = {
   firstName: string;
@@ -50,7 +51,7 @@ class ProfileForm extends React.Component<ProfileFormProps, ProfileFormState> {
   handleSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
     const { profile, abortButtonAction, onReload } = this.props;
-    const API_URL = `${process.env.REACT_APP_API_URL}/profile`;
+    const API_URL = `${BASE_API_URL}/profile`;
 
     const updateData = {
       firstName: profile.firstName,
