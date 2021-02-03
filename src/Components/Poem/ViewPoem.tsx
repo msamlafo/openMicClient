@@ -165,7 +165,7 @@ class ViewPoem extends Component<ViewPoemProps, ViewPoemState> {
         body: JSON.stringify(updateData),
         headers: new Headers({
           'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
+          Authorization: getLoginToken(),
         }),
       })
         .then((result) => result.json())

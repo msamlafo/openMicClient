@@ -65,9 +65,6 @@ class ProfileForm extends React.Component<ProfileFormProps, ProfileFormState> {
       resumeUpload: profile.resumeUpload,
     };
     console.log(updateData);
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-    headers.append('Authorization', localStorage.getItem('token') || '');
 
     const updateProfile = () => {
       fetch(`${API_URL}`, {

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { BASE_API_URL } from '../../Common/Environment';
+import { getLoginToken } from '../../Common/Utility';
 
 export type DeletePoemProps = {
   poetryId: number;
@@ -25,7 +26,7 @@ class DeletePoem extends React.Component<DeletePoemProps, DeletePoemState> {
       method: 'DELETE',
       headers: new Headers({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('token') || '',
+        Authorization: getLoginToken(),
       }),
     })
       .then((result) => result.json())

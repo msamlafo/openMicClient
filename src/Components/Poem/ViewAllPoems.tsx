@@ -26,7 +26,7 @@ import CreatePoem from './CreatePoem';
 import ListGroup from '../../Common/ListGroup';
 import { getCategories } from './PoemCategory';
 import SearchBox from '../../Common/SearchBox';
-import { hasLoginToken } from '../../Common/Utility';
+import { getLoginToken, hasLoginToken } from '../../Common/Utility';
 import { BASE_API_URL } from '../../Common/Environment';
 // import CreateComment from './CreateComment';
 
@@ -83,7 +83,7 @@ class ViewAllPoems extends React.Component<
     fetch(`${API_URL}`, {
       method: 'GET',
       headers: new Headers({
-        Authorization: localStorage.getItem('token') || '',
+        Authorization: getLoginToken(),
       }),
     })
       .then((result) => result.json())
@@ -160,7 +160,7 @@ class ViewAllPoems extends React.Component<
         body: JSON.stringify(postData),
         headers: new Headers({
           'Content-Type': 'application/json',
-          Authorization: localStorage.getItem('token') || '',
+          Authorization: getLoginToken(),
         }),
       })
         .then((result) => result.json())
