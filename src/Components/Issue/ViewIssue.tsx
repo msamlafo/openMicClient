@@ -60,13 +60,13 @@ class ViewIssue extends React.Component<ViewIssueProps, ViewIssueState> {
               authorPic: issue.user.profile.picUrl,
               createdAt: issue.createdAt,
               poetry: {
-                id: issue.poetry.id,
-                title: issue.poetry.title,
-                category: issue.poetry.category,
-                writeUp: issue.poetry.writeUp,
-                poemWriterComment: issue.poetry.poemWriterComment,
-                author: `${issue.poetry.user.profile.firstName} ${issue.poetry.user.profile.lastName}`,
-                authorId: issue.user.id,
+                id: issue.poetry?.id,
+                title: issue.poetry?.title,
+                category: issue.poetry?.category,
+                writeUp: issue.poetry?.writeUp,
+                poemWriterComment: issue.poetry?.poemWriterComment,
+                author: `${issue.poetry?.user.profile.firstName} ${issue.poetry?.user.profile.lastName}`,
+                authorId: issue.user?.id,
               },
             })
           );
