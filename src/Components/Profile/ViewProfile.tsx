@@ -16,6 +16,7 @@ import {
   BrowserRouterPropsType,
   profileFormFieldName,
 } from '../../Common/TypeConfig';
+import { getLoginToken } from '../../Common/Utility';
 
 export type ViewProfileProps = BrowserRouterPropsType & {};
 
@@ -52,7 +53,7 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
       method: 'GET',
       headers: new Headers({
         'Content-Type': 'application/json',
-        Authorization: localStorage.getItem('token') || '',
+        Authorization: getLoginToken(),
       }),
     })
       .then((result) => result.json())
@@ -134,7 +135,7 @@ class ViewProfile extends Component<ViewProfileProps, ViewProfileState> {
             <CardSubtitle tag="h6" className="mb-2 text-muted">
               {profile.email}
             </CardSubtitle>
-            <CardText>Writer Since: {profile.poemWriterSince}</CardText>
+            {/* <CardText>Writer Since: {profile.poemWriterSince}</CardText> */}
             <Row className="mb-3">
               <Col md={4}>
                 <CardText tag="h6" className="text-right lead">
